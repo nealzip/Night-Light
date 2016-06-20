@@ -1,4 +1,4 @@
-// This is my inital Commit 2
+// Version 1.0 Before reorginizing code.
 
 // This is a demonstration on how to use an input device to trigger changes on your neo pixels.
 // You should wire a momentary push button to connect from ground to a digital IO pin.  When you
