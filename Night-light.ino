@@ -1,3 +1,5 @@
+
+// Version 1.2.1Test Brighness code. Minor Cleanup.
 // Version 1.2 BTest Brighness code.
 // Version 1.1 Before reorginizing code.
 
@@ -19,8 +21,8 @@
 #define encoder0PinB  4
 #define increment 1
 
-volatile byte encoder0Pos = 1;
 volatile byte brightness = 1;
+
 volatile byte red = 0x80;
 volatile byte green = 0x80;
 volatile byte blue = 0x80;
@@ -59,7 +61,7 @@ void setup() {
   attachInterrupt(0, doEncoder, CHANGE);  // encoder pin on interrupt 0 - pin 2
   Serial.begin (9600);
   Serial.println("start");                // a personal quirk
- Serial.println(encoder0Pos,HEX);
+ Serial.println(brightness,HEX);
 }
 
 void loop() {
@@ -85,9 +87,9 @@ void loop() {
 
   // Set the last button state to the old state.
   oldState = newState;
-   Serial.println(encoder0Pos,DEC);
+   Serial.println(brightness,DEC);
    delay(100);
-   colorWipe(strip.Color(red * int(encoder0Pos *.1), green * int(encoder0Pos *.1), blue * int(encoder0Pos *.1)), 0);
+   colorWipe(strip.Color(red * int(brightness *.1), green * int(brightness *.1), blue * int(brightness *.1)), 0);
 }
 
 void changecolor(byte i) {
@@ -99,7 +101,7 @@ void changecolor(byte i) {
     case 3: red=0; green=0; blue=10;  // Blue
             break;  
     }
-    colorWipe(strip.Color(red * int(encoder0Pos *.1), green * int(encoder0Pos *.1), blue * int(encoder0Pos *.1)), 0);
+    colorWipe(strip.Color(red * int(brightness *.1), green * int(brightness *.1), blue * int(brightness *.1)), 0);
 }
 
 void startShow(int i) {
@@ -186,8 +188,8 @@ void doEncoder() {
    * [Reference/PortManipulation], specifically the PIND register.
    */
   if (digitalRead(encoder0PinA) == digitalRead(encoder0PinB)) {
-    encoder0Pos++;
-    if (encoder0Pos >= 10) encoder0Pos=10;
+    brightness++;
+    if (brightness >= 10) brightness=10;
  /*
     //brightness = leftRotate(brightness);
     brightness++;
@@ -199,8 +201,8 @@ void doEncoder() {
     strip.show();
     */
   } else {
-    encoder0Pos--;
-    if (encoder0Pos <= 0) encoder0Pos=0;
+    brightness--;
+    if (brightness <= 0) brightness=0;
     /*
     //brightness = rightRotate(brightness);
     brightness--;
@@ -222,7 +224,7 @@ void doEncoder() {
   
   
   //Serial.println(brightness);
-  //Serial.println (encoder0Pos, DEC);
+  //Serial.println (brightness, DEC);
   delay(20);
   */
 }
