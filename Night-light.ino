@@ -1,4 +1,5 @@
-// Version 1.0 Before reorginizing code.
+// Version 1.2 BTest Brighness code.
+// Version 1.1 Before reorginizing code.
 
 // This is a demonstration on how to use an input device to trigger changes on your neo pixels.
 // You should wire a momentary push button to connect from ground to a digital IO pin.  When you
@@ -18,11 +19,12 @@
 #define encoder0PinB  4
 #define increment 1
 
-volatile unsigned int encoder0Pos = 0;
-volatile  byte brightness = 1;
-volatile byte red = 0xF;
-volatile byte green = 0xF;
-volatile byte blue = 0xF;
+volatile byte encoder0Pos = 1;
+volatile byte brightness = 1;
+volatile byte red = 0x80;
+volatile byte green = 0x80;
+volatile byte blue = 0x80;
+volatile byte color=1;
 
 // Parameter 1 = number of pixels in strip,  neopixel stick has 8
 // Parameter 2 = pin number (most are valid)
@@ -57,7 +59,7 @@ void setup() {
   attachInterrupt(0, doEncoder, CHANGE);  // encoder pin on interrupt 0 - pin 2
   Serial.begin (9600);
   Serial.println("start");                // a personal quirk
- //Serial.println(c,HEX);
+ Serial.println(encoder0Pos,HEX);
 }
 
 void loop() {
@@ -71,15 +73,33 @@ void loop() {
     // Check if button is still low after debounce.
     newState = digitalRead(BUTTON_PIN);
     if (newState == LOW) {
-      showType++;
+     /* showType++;
       if (showType > 3)
         showType=0;
-      startShow(showType);
+      startShow(showType);*/
+      changecolor(color);
+      color++;
+      if (color >= 4) color=1;
     }
   }
 
   // Set the last button state to the old state.
   oldState = newState;
+   Serial.println(encoder0Pos,DEC);
+   delay(100);
+   colorWipe(strip.Color(red * int(encoder0Pos *.1), green * int(encoder0Pos *.1), blue * int(encoder0Pos *.1)), 0);
+}
+
+void changecolor(byte i) {
+  switch(i){   
+    case 1: red=10; green=0; blue=0;  // Red
+            break;
+    case 2: red=0; green=10; blue=0;  // Green
+            break;
+    case 3: red=0; green=0; blue=10;  // Blue
+            break;  
+    }
+    colorWipe(strip.Color(red * int(encoder0Pos *.1), green * int(encoder0Pos *.1), blue * int(encoder0Pos *.1)), 0);
 }
 
 void startShow(int i) {
@@ -106,6 +126,9 @@ void colorWipe(uint32_t c, uint8_t wait) {
       strip.show();
       delay(wait);
   }
+  Serial.print(red,HEX);
+  Serial.print(green,HEX);
+  Serial.print(blue,HEX);
 }
 
 
@@ -153,8 +176,9 @@ uint32_t Wheel(byte WheelPos) {
 
 void doEncoder() {
 
-   Serial.print("Start doEncoder: ");
+   /*Serial.print("Start doEncoder: ");
   Serial.println(red,HEX);
+  */
   /* If pinA and pinB are both high or both low, it is spinning
    * forward. If they're different, it's going backward.
    *
@@ -163,7 +187,8 @@ void doEncoder() {
    */
   if (digitalRead(encoder0PinA) == digitalRead(encoder0PinB)) {
     encoder0Pos++;
- 
+    if (encoder0Pos >= 10) encoder0Pos=10;
+ /*
     //brightness = leftRotate(brightness);
     brightness++;
     if (brightness >= 7) brightness=1;
@@ -172,8 +197,11 @@ void doEncoder() {
     blue = blue >> brightness;
     colorWipe(strip.Color(red, green, blue), 0);
     strip.show();
+    */
   } else {
     encoder0Pos--;
+    if (encoder0Pos <= 0) encoder0Pos=0;
+    /*
     //brightness = rightRotate(brightness);
     brightness--;
     if (brightness <= 0) brightness=8;
@@ -182,8 +210,9 @@ void doEncoder() {
     blue = blue << brightness;
     colorWipe(strip.Color(red, green, blue), 0);
     strip.show();
-   
+   */
   }
+  /*
   Serial.print("In doEncoder: ");
   Serial.println(red,HEX);
   Serial.println(green,HEX);
@@ -195,6 +224,7 @@ void doEncoder() {
   //Serial.println(brightness);
   //Serial.println (encoder0Pos, DEC);
   delay(20);
+  */
 }
 
 /*Function to left rotate N*/
